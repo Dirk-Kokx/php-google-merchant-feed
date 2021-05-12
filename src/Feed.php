@@ -8,6 +8,8 @@ class Feed
 {
     const GOOGLE_MERCHANT_XML_NAMESPACE = 'http://base.google.com/ns/1.0';
 
+    private $namespace;
+
     /**
      * Feed title.
      *
@@ -57,6 +59,8 @@ class Feed
         $this->link = $link;
         $this->description = $description;
         $this->rssVersion = $rssVersion;
+        $this->namespace = '{'.static::GOOGLE_MERCHANT_XML_NAMESPACE.'}';
+
     }
 
     /**
@@ -66,7 +70,7 @@ class Feed
      */
     public function addProduct($product)
     {
-        $this->items[] = $product;
+        $this->items[] = $product->getXmlStructure($this->namespace);
     }
 
     /**
@@ -87,7 +91,6 @@ class Feed
     {
         $xmlService = new SabreXmlService();
 
-        $namespace = '{'.static::GOOGLE_MERCHANT_XML_NAMESPACE.'}';
         $xmlService->namespaceMap[static::GOOGLE_MERCHANT_XML_NAMESPACE] = 'g';
 
         $xmlStructure = array('channel' => array());
@@ -111,7 +114,7 @@ class Feed
         }
 
         foreach ($this->items as $item) {
-            $xmlStructure['channel'][] = $item->getXmlStructure($namespace);
+            $xmlStructure['channel'][] = $item;
         }
 
         return $xmlService->write('rss', new RssElement($xmlStructure, $this->rssVersion));
