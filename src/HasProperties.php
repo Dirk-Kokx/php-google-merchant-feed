@@ -81,7 +81,14 @@ trait HasProperties
             $attributes = is_array($attributeItem) ? $attributeItem : [$attributeItem];
             /** @var ProductProperty $attribute */
             foreach ($attributes as $attribute) {
-                $result[] = $attribute->getXmlStructure($namespace);
+                if (is_object($attribute) && $attribute->getValue() instanceof PropertyBag) {
+                    $result[] = [
+                        'name' => $namespace . $attribute->getName(),
+                        'value' => $attribute->getValue()->getPropertiesXmlStructure($namespace),
+                    ];
+                } else {
+                    $result[] = $attribute->getXmlStructure($namespace);
+                }
             }
         }
 
