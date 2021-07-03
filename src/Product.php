@@ -321,7 +321,7 @@ class Product
     public function setShipping($shipping)
     {
         $propertyBag = $shipping->getPropertyBag()->setName('shipping');
-        $this->setAttribute('shipping', $propertyBag);
+        $this->addAttribute('shipping', $propertyBag);
         return $this;
     }
 
